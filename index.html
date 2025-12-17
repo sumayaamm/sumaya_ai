@@ -1,77 +1,142 @@
-const rules = [
-  // Greetings
-  {
-    rule: /\b(hi|hello|hey|yo)\b/i,
-    respond: () => pick([
-      "Hi! Ask me about a country or any general topic.",
-      "Hey — what do you want to know?",
-      "Hello! I can help with countries, facts, or explanations."
-    ])
-  },
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sumaya AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  // Countries: capital / info
-  {
-    rule: /\b(capital of|country|where is|tell me about)\b/i,
-    respond: (m, userText) => {
-      return `Here’s a simple country breakdown format I use:
-
-• Location (continent/region)  
-• Capital city  
-• Language(s)  
-• What it’s known for  
-
-Tell me the country name (for example: “Japan” or “Nigeria”) and I’ll explain it clearly.`;
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#ffe6f0;
+      margin:0;
+      padding:30px;
+      text-align:center;
     }
-  },
+    h1{
+      color:#8a0050;
+      font-size:42px;
+      margin-bottom:6px;
+    }
+    .sub{
+      color:#8a0050;
+      margin-bottom:18px;
+      font-size:16px;
+    }
+    #wrap{
+      max-width:900px;
+      margin:0 auto;
+    }
+    input{
+      font-size:18px;
+      padding:12px;
+      width:70%;
+      border-radius:12px;
+      border:2px solid #ff69b4;
+      outline:none;
+    }
+    button{
+      font-size:18px;
+      padding:12px 16px;
+      border-radius:12px;
+      border:none;
+      background:#ff69b4;
+      color:white;
+      cursor:pointer;
+    }
+    button:hover{background:#ff4da6}
+    #chat{
+      margin-top:20px;
+      text-align:left;
+    }
+    .msg{
+      background:white;
+      padding:12px 14px;
+      margin:10px 0;
+      border-radius:14px;
+      font-size:18px;
+      border:1px solid #ffc2dd;
+    }
+    .you b{color:#b00060}
+    .ai b{color:#7a0050}
+    .credit{
+      margin-top:20px;
+      font-size:14px;
+      color:#8a0050;
+      text-align:center;
+    }
+  </style>
+</head>
 
-  // “What country is ___ in?”
-  {
-    rule: /\bwhat country is\b/i,
-    respond: () =>
-      "Tell me the city, landmark, or place and I’ll tell you the country and region."
-  },
+<body>
+  <div id="wrap">
+    <h1>Sumaya AI</h1>
+    <div class="sub">Ask about countries or general information</div>
 
-  // General knowledge / definitions
-  {
-    rule: /^\s*(what is|what are|define|explain|why|how)\b/i,
-    respond: () =>
-`Here’s a clear way to understand it:
+    <div>
+      <input id="input" placeholder="Type a question…" />
+      <button onclick="send()">Send</button>
+    </div>
 
-1) Simple definition  
-2) Key facts  
-3) One example  
+    <div id="chat"></div>
 
-If you want it shorter or more detailed, just say so.`
-  },
+    <div class="credit">This was created by Sumaya Mohamed</div>
+  </div>
 
-  // History / social studies
-  {
-    rule: /\b(history|war|independence|government|culture)\b/i,
-    respond: () =>
-      "Tell me the country or time period and I’ll explain it in clear, simple terms."
-  },
+<script>
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
 
-  // Writing help
-  {
-    rule: /\b(email|essay|paragraph|write|speech)\b/i,
-    respond: () =>
-`I can help write that.
-
-Tell me:
-• Topic  
-• Length  
-• Tone (formal or casual)
-
-I’ll write it cleanly.`
-  },
-
-  // Stress / confusion
-  {
-    rule: /\b(confused|stressed|lost|overwhelmed)\b/i,
-    respond: () => pick([
-      "That’s okay. Tell me exactly what part you’re stuck on.",
-      "No stress — we’ll do this step by step.",
-      "Tell me what the question is asking and I’ll simplify it."
-    ])
+  function add(role, text){
+    const cls = role === "You" ? "you" : "ai";
+    chat.innerHTML += `<div class="msg ${cls}"><b>${role}:</b> ${text}</div>`;
+    window.scrollTo(0, document.body.scrollHeight);
   }
-];
+
+  function reply(q){
+    const m = q.toLowerCase();
+
+    // Countries
+    if(m.includes("capital of")){
+      return "Tell me the country name and I’ll tell you its capital.";
+    }
+    if(m.includes("tell me about") || m.includes("country")){
+      return "I can explain a country’s location, capital, language, and what it’s known for. Which country?";
+    }
+    if(m.includes("where is")){
+      return "Tell me the place and I’ll explain where it is in the world.";
+    }
+
+    // General info
+    if(m.startsWith("what") || m.startsWith("how") || m.startsWith("why") || m.startsWith("explain")){
+      return "Here’s a simple way to understand it: start with a clear definition, then explain how it works, and finish with an example. Tell me the exact topic and I’ll break it down.";
+    }
+
+    // Writing
+    if(m.includes("email") || m.includes("write")){
+      return "I can help write that. Tell me who it’s for and what it’s about.";
+    }
+
+    // Stress
+    if(m.includes("confused") || m.includes("stressed") || m.includes("angry")){
+      return "That’s okay. Tell me what part is confusing you most and I’ll help step by step.";
+    }
+
+    // Default
+    return "Ask me about a country or any general topic and I’ll help.";
+  }
+
+  function send(){
+    const q = input.value.trim();
+    if(!q) return;
+    input.value = "";
+    add("You", q);
+    add("AI", reply(q));
+  }
+
+  input.addEventListener("keydown", e => {
+    if(e.key === "Enter") send();
+  });
+</script>
+</body>
+</html>
