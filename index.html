@@ -84,41 +84,66 @@
   </div>
 
 <script>
+  <script>
   const chat = document.getElementById("chat");
   const input = document.getElementById("input");
 
-  function add(role, text){
+  function add(role, text) {
     const cls = role === "You" ? "you" : "ai";
     chat.innerHTML += `<div class="msg ${cls}"><b>${role}:</b> ${text}</div>`;
     window.scrollTo(0, document.body.scrollHeight);
   }
 
-  function reply(q){
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function reply(q) {
     const m = q.toLowerCase();
 
+    // Greetings
+    if (/(hi|hello|hey|yo)\b/.test(m)) {
+      return pick([
+        "Hi! Ask me about a country or general information.",
+        "Hey! What do you want to know?",
+        "Hello — I can help with countries and facts."
+      ]);
+    }
+
     // Countries
-    if(m.includes("capital of")){
+    if (m.includes("capital of")) {
       return "Tell me the country name and I’ll tell you its capital.";
     }
-    if(m.includes("tell me about") || m.includes("country")){
+
+    if (m.includes("tell me about") || m.includes("country")) {
       return "I can explain a country’s location, capital, language, and what it’s known for. Which country?";
     }
-    if(m.includes("where is")){
+
+    if (m.includes("where is")) {
       return "Tell me the place and I’ll explain where it is in the world.";
     }
 
-    // General info
-    if(m.startsWith("what") || m.startsWith("how") || m.startsWith("why") || m.startsWith("explain")){
-      return "Here’s a simple way to understand it: start with a clear definition, then explain how it works, and finish with an example. Tell me the exact topic and I’ll break it down.";
+    if (m.includes("what country is")) {
+      return "Tell me the city, landmark, or place and I’ll tell you the country.";
+    }
+
+    // General knowledge
+    if (
+      m.startsWith("what") ||
+      m.startsWith("how") ||
+      m.startsWith("why") ||
+      m.startsWith("explain")
+    ) {
+      return "Here’s a simple way to understand it: start with a clear definition, then explain how it works, and finish with an example.";
     }
 
     // Writing
-    if(m.includes("email") || m.includes("write")){
+    if (m.includes("email") || m.includes("write")) {
       return "I can help write that. Tell me who it’s for and what it’s about.";
     }
 
     // Stress
-    if(m.includes("confused") || m.includes("stressed") || m.includes("angry")){
+    if (m.includes("confused") || m.includes("stressed") || m.includes("angry")) {
       return "That’s okay. Tell me what part is confusing you most and I’ll help step by step.";
     }
 
@@ -126,17 +151,19 @@
     return "Ask me about a country or any general topic and I’ll help.";
   }
 
-  function send(){
+  function send() {
     const q = input.value.trim();
-    if(!q) return;
+    if (!q) return;
     input.value = "";
     add("You", q);
     add("AI", reply(q));
   }
 
   input.addEventListener("keydown", e => {
-    if(e.key === "Enter") send();
+    if (e.key === "Enter") send();
   });
+</script>
+
 </script>
 </body>
 </html>
