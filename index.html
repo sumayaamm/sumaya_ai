@@ -1,97 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sumaya_ai | Dashboard</title>
-    <style>
-        :root { --sidebar-bg: #f9f9f9; --border: #e5e7eb; --primary: #1a73e8; --bg: #fff; --text: #1a1a1a; }
-        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); color: var(--text); }
+const rules = [
+  // Greetings
+  {
+    rule: /\b(hi|hello|hey|yo)\b/i,
+    respond: () => pick([
+      "Hi! Ask me about a country or any general topic.",
+      "Hey — what do you want to know?",
+      "Hello! I can help with countries, facts, or explanations."
+    ])
+  },
 
-        /* Sidebar Layout */
-        #sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        #new-chat-btn { background: #fff; border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; margin-bottom: 20px; }
-        .history-item { font-size: 13px; padding: 8px; color: #4b5563; border-radius: 6px; cursor: pointer; }
+  // Countries: capital / info
+  {
+    rule: /\b(capital of|country|where is|tell me about)\b/i,
+    respond: (m, userText) => {
+      return `Here’s a simple country breakdown format I use:
 
-        /* Main Chat Area */
-        #main-content { flex: 1; display: flex; flex-direction: column; position: relative; }
-        #chat-header { padding: 15px 30px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; }
-        #chat-header::before { content: ''; width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; margin-right: 10px; }
+• Location (continent/region)  
+• Capital city  
+• Language(s)  
+• What it’s known for  
 
-        #chat-box { flex: 1; padding: 40px 15% 100px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
-        .message { max-width: 800px; line-height: 1.6; font-size: 15px; border-radius: 12px; }
-        .user { align-self: flex-end; background: #f1f3f4; padding: 12px 18px; }
-        .ai { align-self: flex-start; padding: 0px; }
-
-        /* Input bar */
-        #input-container { position: absolute; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; }
-        #input-wrapper { width: 70%; max-width: 800px; display: flex; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        input { flex: 1; border: none; outline: none; padding: 10px; font-size: 15px; }
-        button { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-<div id="sidebar">
-    <button id="new-chat-btn">+ New Chat</button>
-    <div style="font-size: 11px; color: #9ca3af; margin-bottom: 10px; padding-left: 8px;">RECENT</div>
-    <div class="history-item">Professional AI Setup</div>
-</div>
-
-<div id="main-content">
-    <div id="chat-header">sumaya_ai</div>
-    <div id="chat-box">
-        <div class="message ai"><b>sumaya_ai:</b> Hello. I am your professional assistant. How can I help you today?</div>
-    </div>
-    
-    <div id="input-container">
-        <div id="input-wrapper">
-            <input type="text" id="user-input" placeholder="Ask sumaya_ai..." onkeypress="if(event.key === 'Enter') sendMessage()">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // PASTE YOUR FREE GOOGLE API KEY HERE
-    const API_KEY = "AIzaSyApoWom8NlS_5QEeV3ziTePi0XHcQg01LE"; 
-    const API_URL = `generativelanguage.googleapis.com{API_KEY}`;
-
-    async function sendMessage() {
-        const input = document.getElementById('user-input');
-        const text = input.value.trim();
-        if (!text) return;
-
-        addMessage(text, 'user');
-        input.value = "";
-        const loading = addMessage("Generating response...", 'ai');
-
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: `You are sumaya_ai, a professional assistant. User: ${text}` }] }]
-                })
-            });
-
-            const data = await response.json();
-            const aiText = data.candidates[0].content.parts[0].text;
-            loading.innerHTML = `<b>sumaya_ai:</b> ${aiText}`;
-        } catch (err) {
-            loading.innerHTML = "<b>Error:</b> Check if your API key is correct or if you've hit the limit.";
-        }
+Tell me the country name (for example: “Japan” or “Nigeria”) and I’ll explain it clearly.`;
     }
+  },
 
-    function addMessage(text, sender) {
-        const chatBox = document.getElementById('chat-box');
-        const div = document.createElement('div');
-        div.className = `message ${sender}`;
-        div.innerHTML = sender === 'ai' ? `<b>sumaya_ai:</b> ${text}` : text;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        return div;
-    }
-</script>
-</body>
-</html>
+  // “What country is ___ in?”
+  {
+    rule: /\bwhat country is\b/i,
+    respond: () =>
+      "Tell me the city, landmark, or place and I’ll tell you the country and region."
+  },
+
+  // General knowledge / definitions
+  {
+    rule: /^\s*(what is|what are|define|explain|why|how)\b/i,
+    respond: () =>
+`Here’s a clear way to understand it:
+
+1) Simple definition  
+2) Key facts  
+3) One example  
+
+If you want it shorter or more detailed, just say so.`
+  },
+
+  // History / social studies
+  {
+    rule: /\b(history|war|independence|government|culture)\b/i,
+    respond: () =>
+      "Tell me the country or time period and I’ll explain it in clear, simple terms."
+  },
+
+  // Writing help
+  {
+    rule: /\b(email|essay|paragraph|write|speech)\b/i,
+    respond: () =>
+`I can help write that.
+
+Tell me:
+• Topic  
+• Length  
+• Tone (formal or casual)
+
+I’ll write it cleanly.`
+  },
+
+  // Stress / confusion
+  {
+    rule: /\b(confused|stressed|lost|overwhelmed)\b/i,
+    respond: () => pick([
+      "That’s okay. Tell me exactly what part you’re stuck on.",
+      "No stress — we’ll do this step by step.",
+      "Tell me what the question is asking and I’ll simplify it."
+    ])
+  }
+];
