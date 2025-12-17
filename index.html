@@ -3,95 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sumaya_ai</title>
+    <title>sumaya_ai | Dashboard</title>
     <style>
-        /* Professional White & Grey Theme */
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #333; }
-        #chat-container { width: 450px; height: 700px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e0e0e0; }
-        #header { background: #ffffff; color: #1a1a1a; padding: 20px; text-align: left; font-size: 18px; font-weight: 600; border-bottom: 1px solid #eee; display: flex; align-items: center; }
-        #header::before { content: ''; display: inline-block; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; margin-right: 10px; }
-        #chat-box { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #ffffff; }
-        .message { padding: 12px 16px; border-radius: 8px; max-width: 85%; font-size: 14px; line-height: 1.5; }
-        .user { align-self: flex-end; background: #007aff; color: white; border-bottom-right-radius: 2px; }
-        .ai { align-self: flex-start; background: #f1f3f4; color: #202124; border-bottom-left-radius: 2px; }
-        #input-area { display: flex; padding: 20px; background: #ffffff; border-top: 1px solid #eee; }
-        input { flex: 1; padding: 12px 16px; border: 1px solid #dadce0; border-radius: 8px; outline: none; font-size: 14px; transition: border 0.2s; }
-        input:focus { border-color: #007aff; }
-        button { background: #1a73e8; color: white; border: none; padding: 10px 20px; margin-left: 12px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 14px; }
-        button:hover { background: #1765cf; }
+        :root { --sidebar-bg: #f9f9f9; --border: #e5e7eb; --primary: #1a73e8; --bg: #fff; --text: #1a1a1a; }
+        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg); color: var(--text); }
+
+        /* Sidebar Layout */
+        #sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        #new-chat-btn { background: #fff; border: 1px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; margin-bottom: 20px; }
+        .history-item { font-size: 13px; padding: 8px; color: #4b5563; border-radius: 6px; cursor: pointer; }
+
+        /* Main Chat Area */
+        #main-content { flex: 1; display: flex; flex-direction: column; position: relative; }
+        #chat-header { padding: 15px 30px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; }
+        #chat-header::before { content: ''; width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; margin-right: 10px; }
+
+        #chat-box { flex: 1; padding: 40px 15% 100px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        .message { max-width: 800px; line-height: 1.6; font-size: 15px; border-radius: 12px; }
+        .user { align-self: flex-end; background: #f1f3f4; padding: 12px 18px; }
+        .ai { align-self: flex-start; padding: 0px; }
+
+        /* Input bar */
+        #input-container { position: absolute; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; }
+        #input-wrapper { width: 70%; max-width: 800px; display: flex; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        input { flex: 1; border: none; outline: none; padding: 10px; font-size: 15px; }
+        button { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="chat-container">
-    <div id="header">sumaya_ai</div>
-    <div id="chat-box" id="chatbox">
-        <div class="message ai">Hello. I am sumaya_ai. How can I assist your workflow today?</div>
+<div id="sidebar">
+    <button id="new-chat-btn">+ New Chat</button>
+    <div style="font-size: 11px; color: #9ca3af; margin-bottom: 10px; padding-left: 8px;">RECENT</div>
+    <div class="history-item">Professional AI Setup</div>
+</div>
+
+<div id="main-content">
+    <div id="chat-header">sumaya_ai</div>
+    <div id="chat-box">
+        <div class="message ai"><b>sumaya_ai:</b> Hello. I am your professional assistant. How can I help you today?</div>
     </div>
-    <div id="input-area">
-        <input type="text" id="user-input" placeholder="Type your query..." onkeypress="if(event.key === 'Enter') sendMessage()">
-        <button onclick="sendMessage()">Send</button>
+    
+    <div id="input-container">
+        <div id="input-wrapper">
+            <input type="text" id="user-input" placeholder="Ask sumaya_ai..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Remember to paste your restricted API key here
-    const API_KEY = "from openai import OpenAI
-
-client = OpenAI(
-  api_key="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"
-)
-
-response = client.responses.create(
-  model="gpt-5-nano",
-  input="write a haiku about ai",
-  store=True,
-)
-"; 
+    // PASTE YOUR FREE GOOGLE API KEY HERE
+    const API_KEY = "AIzaSyAMjw01lDO-v-iAlUrxbW_z3NoP98UfXzk"; 
     const API_URL = `generativelanguage.googleapis.com{API_KEY}`;
 
     async function sendMessage() {
         const input = document.getElementById('user-input');
-        const userText = input.value.trim();
-        if (!userText) return;
+        const text = input.value.trim();
+        if (!text) return;
 
-        addMessage(userText, 'user');
+        addMessage(text, 'user');
         input.value = "";
-
-        const loadingDiv = addMessage("Generating response...", 'ai');
+        const loading = addMessage("Generating response...", 'ai');
 
         try {
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: `You are sumaya_ai, a professional and concise AI assistant. Respond to: ${userText}` }] }]
+                    contents: [{ parts: [{ text: `You are sumaya_ai, a professional assistant. User: ${text}` }] }]
                 })
             });
 
             const data = await response.json();
-            const aiResponse = data.candidates[0].content.parts[0].text;
-            loadingDiv.textContent = aiResponse;
-        } catch (error) {
-            loadingDiv.textContent = "Connectivity error. Verify API configuration.";
-            console.error(error);
+            const aiText = data.candidates[0].content.parts[0].text;
+            loading.innerHTML = `<b>sumaya_ai:</b> ${aiText}`;
+        } catch (err) {
+            loading.innerHTML = "<b>Error:</b> Check if your API key is correct or if you've hit the limit.";
         }
-        
-        const chatBox = document.getElementById('chat-box');
-        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function addMessage(text, sender) {
         const chatBox = document.getElementById('chat-box');
         const div = document.createElement('div');
         div.className = `message ${sender}`;
-        div.textContent = text;
+        div.innerHTML = sender === 'ai' ? `<b>sumaya_ai:</b> ${text}` : text;
         chatBox.appendChild(div);
         chatBox.scrollTop = chatBox.scrollHeight;
         return div;
     }
-  Initial sumaya_ai commit
 </script>
-
 </body>
 </html>
