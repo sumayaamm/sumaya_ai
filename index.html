@@ -2,146 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Sumaya AI</title>
+  <title>su.ai</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     body{
       font-family: Arial, sans-serif;
-      background:#ffe6f0;
+      background:#0b1d3a;
+      color:white;
       margin:0;
-      padding:30px;
+      padding:40px;
       text-align:center;
     }
     h1{
-      color:#8a0050;
-      font-size:42px;
-      margin-bottom:6px;
+      font-size:48px;
+      margin-bottom:10px;
     }
-    .sub{
-      color:#8a0050;
-      margin-bottom:18px;
-      font-size:16px;
-    }
-    #wrap{
-      max-width:900px;
-      margin:0 auto;
-    }
-    input{
+    p{
       font-size:18px;
-      padding:12px;
-      width:70%;
-      border-radius:12px;
-      border:2px solid #ff69b4;
-      outline:none;
+      opacity:0.9;
+      margin-bottom:30px;
     }
-    button{
-      font-size:18px;
-      padding:12px 16px;
-      border-radius:12px;
-      border:none;
-      background:#ff69b4;
+    .btn{
+      display:inline-block;
+      background:#1e40af;
       color:white;
-      cursor:pointer;
-    }
-    button:hover{background:#ff4da6}
-    #chat{
-      margin-top:20px;
-      text-align:left;
-    }
-    .msg{
-      background:white;
-      padding:12px 14px;
-      margin:10px 0;
+      text-decoration:none;
+      padding:18px 28px;
       border-radius:14px;
-      font-size:18px;
-      border:1px solid #ffc2dd;
+      font-size:20px;
+      margin:10px;
     }
-    .you b{color:#b00060}
-    .ai b{color:#7a0050}
+    .btn:hover{
+      background:#2563eb;
+    }
     .credit{
-      margin-top:20px;
+      margin-top:40px;
       font-size:14px;
-      color:#8a0050;
-      text-align:center;
+      opacity:0.7;
     }
   </style>
 </head>
 
 <body>
-  <div id="wrap">
-    <h1>Sumaya AI</h1>
-    <div class="sub">Countries • General information</div>
+  <h1>su.ai</h1>
+  <p>Ask anything. Get smart answers.</p>
 
-    <div>
-      <input id="input" placeholder="Ask a question…" />
-      <button onclick="send()">Send</button>
-    </div>
+  <a class="btn" href="https://copilot.microsoft.com/" target="_blank">
+    Start Chat
+  </a>
 
-    <div id="chat"></div>
-
-    <div class="credit">This was created by Sumaya Mohamed</div>
-  </div>
-
-<script>
-  const chat = document.getElementById("chat");
-  const input = document.getElementById("input");
-
-  function add(role, text){
-    const cls = role === "You" ? "you" : "ai";
-    chat.innerHTML += `<div class="msg ${cls}"><b>${role}:</b> ${text}</div>`;
-    window.scrollTo(0, document.body.scrollHeight);
-  }
-
-  // === YOUR “WAIT 3 SECONDS” NODE ===
-  function waitThreeSeconds() {
-    return new Promise(resolve => setTimeout(resolve, 3000));
-  }
-
-  function reply(q){
-    const m = q.toLowerCase();
-
-    if (m.includes("capital of")) {
-      return "Tell me the country name and I’ll tell you its capital.";
-    }
-
-    if (m.includes("tell me about")) {
-      return "I can explain a country’s location, capital, language, and what it’s known for. Which country?";
-    }
-
-    if (m.includes("where is")) {
-      return "Tell me the place and I’ll explain where it is in the world.";
-    }
-
-    if (m.startsWith("what") || m.startsWith("how") || m.startsWith("why") || m.startsWith("explain")) {
-      return "Here’s a simple way to understand it: start with a clear definition, explain how it works, and end with an example.";
-    }
-
-    return "Ask me about a country or general information and I’ll help.";
-  }
-
-  async function send(){
-    const q = input.value.trim();
-    if(!q) return;
-    input.value = "";
-
-    add("You", q);
-
-    // Thinking message
-    const thinkingId = "t" + Date.now();
-    chat.innerHTML += `<div class="msg ai" id="${thinkingId}"><b>AI:</b> Thinking...</div>`;
-    window.scrollTo(0, document.body.scrollHeight);
-
-    // ⏱ WAIT 3 SECONDS (your JSON logic)
-    await waitThreeSeconds();
-
-    document.getElementById(thinkingId).innerHTML =
-      `<b>AI:</b> ${reply(q)}`;
-  }
-
-  input.addEventListener("keydown", e => {
-    if(e.key === "Enter") send();
-  });
-</script>
+  <div class="credit">This was created by Sumaya Mohamed</div>
 </body>
 </html>
